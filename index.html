@@ -5,6 +5,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tic-Tac-Toe</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    // Fallback for Tailwind CSS if CDN fails
+    if (!window.tailwind) {
+      console.warn('Tailwind CSS failed to load. Applying basic styles.');
+      document.head.insertAdjacentHTML('beforeend', `
+        <style>
+          body { font-family: 'Courier New', Courier, monospace; background: linear-gradient(135deg, #1a1a1a 0%, #2c2c2c 100%); color: white; }
+          .container { max-width: 448px; margin: 32px auto; padding: 32px; background: rgba(0,0,0,0.8); border-radius: 16px; }
+          .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+          button { font-size: 48px; height: 96px; border: 1px solid #00ff88; background: transparent; color: #00ff88; border-radius: 8px; }
+          button:hover { background: rgba(0,255,136,0.1); }
+          .modal { display: none; background: rgba(0,0,0,0.8); }
+          .modal.show { display: flex; }
+        </style>
+      `);
+    }
+  </script>
   <style>
     body {
       background: linear-gradient(135deg, #1a1a1a 0%, #2c2c2c 100%);
@@ -84,7 +101,7 @@
 
   <!-- Developer Details and Social Links -->
   <footer class="bg-black bg-opacity-80 w-full py-4 text-center text-gray-400">
-    <p class="text-sm">Developed by Kalyan N | Full-Stack Developer</p>
+    <p class="text-sm">Developed by Jane Doe | Full-Stack Developer</p>
     <p class="text-sm mb-2">Built with HTML, Tailwind CSS, and JavaScript</p>
     <div class="flex justify-center space-x-4">
       <a href="https://github.com" target="_blank" class="hover:text-green-400 transition">
@@ -109,55 +126,113 @@
     let scores = { X: 0, O: 0 };
 
     function makeMove(index) {
-      if (board[index] === '' && gameActive) {
+      try {
+        if (!gameActive || board[index] !== '') {
+          console.warn(`Invalid move at index ${index}. Game active: ${gameActive}, Cell: ${board[index]}`);
+          return;
+        }
         board[index] = currentPlayer;
-        document.getElementById('board').children[index].textContent = currentPlayer;
+        const cell = document.getElementById('board').children[index];
+        if (!cell) {
+          console.error(`Cell at index ${index} not found`);
+          return;
+        }
+        cell.textContent = currentPlayer;
         if (checkWin()) {
           scores[currentPlayer]++;
-          document.getElementById(score${currentPlayer}).textContent = scores[currentPlayer];
-          showModal(Player ${currentPlayer} Wins!);
+          document.getElementById(`score${currentPlayer}`).textContent = scores[currentPlayer];
+          showModal(`Player ${currentPlayer} Wins!`);
           gameActive = false;
         } else if (board.every(cell => cell !== '')) {
           showModal("It's a Draw!");
           gameActive = false;
         } else {
           currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
-          document.getElementById('status').textContent = Player ${currentPlayer}'s Turn;
+          document.getElementById('status').textContent = `Player ${currentPlayer}'s Turn`;
         }
+      } catch (error) {
+        console.error('Error in makeMove:', error);
+        showModal('An error occurred. Please restart the game.');
       }
     }
 
     function checkWin() {
-      const winPatterns = [
-        [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
-        [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
-        [0, 4, 8], [2, 4, 6] // Diagonals
-      ];
-      return winPatterns.some(pattern => 
-        pattern.every(index => board[index] === currentPlayer)
-      );
+      try {
+        const winPatterns = [
+          [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
+          [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
+          [0, 4, 8], [2, 4, 6] // Diagonals
+        ];
+        return winPatterns.some(pattern => 
+          pattern.every(index => {
+            if (typeof board[index] === 'undefined') {
+              console.warn(`Undefined board index in pattern ${pattern}`);
+              return false;
+            }
+            return board[index] === currentPlayer;
+          })
+        );
+      } catch (error) {
+        console.error('Error in checkWin:', error);
+        return false;
+      }
     }
 
     function restartGame() {
-      board = ['', '', '', '', '', '', '', '', ''];
-      currentPlayer = 'X';
-      gameActive = true;
-      document.getElementById('status').textContent = Player ${currentPlayer}'s Turn;
-      Array.from(document.getElementById('board').children).forEach(button => {
-        button.textContent = '';
-      });
-      closeModal();
+      try {
+        board = ['', '', '', '', '', '', '', '', ''];
+        currentPlayer = 'X';
+        gameActive = true;
+        document.getElementById('status').textContent = `Player ${currentPlayer}'s Turn`;
+        const buttons = document.getElementById('board').children;
+        Array.from(buttons).forEach(button => {
+          button.textContent = '';
+        });
+        closeModal();
+      } catch (error) {
+        console.error('Error in restartGame:', error);
+        showModal('Failed to restart game. Please refresh the page.');
+      }
     }
 
     function showModal(message) {
-      document.getElementById('modalMessage').textContent = message;
-      document.getElementById('modal').classList.add('show');
+      try {
+        const modalMessage = document.getElementById('modalMessage');
+        const modal = document.getElementById('modal');
+        if (!modalMessage || !modal) {
+          console.error('Modal elements not found');
+          return;
+        }
+        modalMessage.textContent = message;
+        modal.classList.add('show');
+      } catch (error) {
+        console.error('Error in showModal:', error);
+      }
     }
 
     function closeModal() {
-      document.getElementById('modal').classList.remove('show');
-      restartGame();
+      try {
+        const modal = document.getElementById('modal');
+        if (!modal) {
+          console.error('Modal element not found');
+          return;
+        }
+        modal.classList.remove('show');
+      } catch (error) {
+        console.error('Error in closeModal:', error);
+      }
     }
+
+    // Initialize game state
+    window.addEventListener('load', () => {
+      try {
+        console.log('Game initialized');
+        restartGame();
+      } catch (error) {
+        console.error('Error initializing game:', error);
+        showModal('Failed to initialize game. Please refresh the page.');
+      }
+    });
   </script>
 </body>
 </html>
