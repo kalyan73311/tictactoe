@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tic-Tac-Toe</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background: linear-gradient(135deg, #1a1a1a 0%, #2c2c2c 100%);
+      font-family: 'Courier New', Courier, monospace;
+    }
+    .modal {
+      display: none;
+      background: rgba(0, 0, 0, 0.8);
+    }
+    .modal.show {
+      display: flex;
+    }
+    .skeleton-board {
+      background: transparent;
+      border: 2px solid #00ff88;
+      box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
+    }
+    .skeleton-board button {
+      border: 1px solid #00ff88;
+      background: transparent;
+      color: #00ff88;
+      transition: all 0.2s ease;
+    }
+    .skeleton-board button:hover {
+      background: rgba(0, 255, 136, 0.1);
+      box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+    }
+    .neon-text {
+      text-shadow: 0 0 5px rgba(0, 255, 136, 0.8), 0 0 10px rgba(0, 255, 136, 0.4);
+    }
+    .neon-button {
+      box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+    }
+    footer a:hover {
+      color: #00ff88;
+      text-shadow: 0 0 5px rgba(0, 255, 136, 0.8);
+    }
+  </style>
+</head>
+<body class="flex flex-col items-center justify-between min-h-screen text-white">
+  <div class="bg-black bg-opacity-80 p-8 rounded-2xl shadow-2xl w-full max-w-md mt-8">
+    <h1 class="text-4xl font-extrabold text-center mb-6 text-green-400 neon-text">Tic-Tac-Toe</h1>
+    
+    <!-- Score Tracker -->
+    <div class="flex justify-between mb-4">
+      <div class="text-lg font-semibold">Player X: <span id="scoreX" class="text-green-400">0</span></div>
+      <div class="text-lg font-semibold">Player O: <span id="scoreO" class="text-green-400">0</span></div>
+    </div>
+    
+    <!-- Turn Indicator -->
+    <div id="status" class="text-xl font-medium text-center mb-6 text-gray-300 neon-text">Player X's Turn</div>
+    
+    <!-- Game Board -->
+    <div id="board" class="grid grid-cols-3 gap-2 w-full skeleton-board">
+      <button class="h-24 text-5xl font-bold rounded-lg hover:bg-opacity-10 transition" onclick="makeMove(0)"></button>
+      <button class="h-24 text-5xl font-bold rounded-lg hover:bg-opacity-10 transition" onclick="makeMove(1)"></button>
+      <button class="h-24 text-5xl font-bold rounded-lg hover:bg-opacity-10 transition" onclick="makeMove(2)"></button>
+      <button class="h-24 text-5xl font-bold rounded-lg hover:bg-opacity-10 transition" onclick="makeMove(3)"></button>
+      <button class="h-24 text-5xl font-bold rounded-lg hover:bg-opacity-10 transition" onclick="makeMove(4)"></button>
+      <button class="h-24 text-5xl font-bold rounded-lg hover:bg-opacity-10 transition" onclick="makeMove(5)"></button>
+      <button class="h-24 text-5xl font-bold rounded-lg hover:bg-opacity-10 transition" onclick="makeMove(6)"></button>
+      <button class="h-24 text-5xl font-bold rounded-lg hover:bg-opacity-10 transition" onclick="makeMove(7)"></button>
+      <button class="h-24 text-5xl font-bold rounded-lg hover:bg-opacity-10 transition" onclick="makeMove(8)"></button>
+    </div>
+    
+    <!-- Restart Button -->
+    <button id="restart" class="mt-6 w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition font-semibold neon-button" onclick="restartGame()">Restart Game</button>
+    
+    <!-- Modal for Game Result -->
+    <div id="modal" class="modal fixed inset-0 items-center justify-center">
+      <div class="bg-black bg-opacity-90 p-6 rounded-lg shadow-xl text-center max-w-sm w-full">
+        <h2 id="modalMessage" class="text-2xl font-bold mb-4 text-green-400 neon-text"></h2>
+        <button class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition neon-button" onclick="closeModal()">Play Again</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Developer Details and Social Links -->
+  <footer class="bg-black bg-opacity-80 w-full py-4 text-center text-gray-400">
+    <p class="text-sm">Developed by Jane Doe | Full-Stack Developer</p>
+    <p class="text-sm mb-2">Built with HTML, Tailwind CSS, and JavaScript</p>
+    <div class="flex justify-center space-x-4">
+      <a href="https://github.com" target="_blank" class="hover:text-green-400 transition">
+        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12c0 4.42 2.87 8.17 6.84 9.49.5.09.68-.22.68-.48v-1.71c-2.78.61-3.37-1.34-3.37-1.34-.45-1.15-1.1-1.46-1.1-1.46-.9-.61.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.89 1.52 2.34 1.08 2.91.83.09-.65.35-1.08.64-1.33-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.26.1-2.63 0 0 .84-.27 2.75 1.03A9.56 9.56 0 0112 6.8c.85 0 1.71.12 2.52.35 1.91-1.3 2.75-1.03 2.75-1.03.55 1.37.2 2.38.1 2.63.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.69-4.57 4.94.36.31.68.92.68 1.85v2.74c0 .26.18.58.69.48A10.01 10.01 0 0022 12c0-5.52-4.48-10-10-10z"/></svg>
+      </a>
+      <a href="https://twitter.com" target="_blank" class="hover:text-green-400 transition">
+        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z"/></svg>
+      </a>
+      <a href="https://linkedin.com" target="_blank" class="hover:text-green-400 transition">
+        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M19 3a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h14zm-9.75 14.5v-6.75h-2.25V17.5h2.25zm-1.13-8.25c.81 0 1.35-.54 1.35-1.22 0-.68-.54-1.22-1.35-1.22s-1.35.54-1.35 1.22.54 1.22 1.35 1.22zm9 8.25v-3.6c0-1.94-.42-3.44-2.69-3.44-1.09 0-1.83.6-2.13 1.17v-1.08h-2.25V17.5h2.25v-3.6c0-.95.18-1.88 1.36-1.88 1.17 0 1.17.9 1.17 1.95v3.53h2.25z"/></svg>
+      </a>
+      <a href="https://instagram.com" target="_blank" class="hover:text-green-400 transition">
+        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.16c3.21 0 3.58.01 4.84.07 1.17.05 1.8.24 2.22.4.56.22.96.49 1.38.91.42.42.69.82.91 1.38.16.42.35 1.05.4 2.22.06 1.26.07 1.63.07 4.84s-.01 3.58-.07 4.84c-.05 1.17-.24 1.8-.4 2.22-.22.56-.49.96-.91 1.38-.42.42-.82.69-1.38.91-.42.16-1.05.35-2.22.4-1.26.06-1.63.07-4.84.07s-3.58-.01-4.84-.07c-1.17-.05-1.8-.24-2.22-.4-.56-.22-.96-.49-1.38-.91-.42-.42-.69-.82-.91-1.38-.16-.42-.35-1.05-.4-2.22-.06-1.26-.07-1.63-.07-4.84s.01-3.58.07-4.84c.05-1.17.24-1.8.4-2.22.22-.56.49-.96.91-1.38.42-.42.82-.69 1.38-.91.42-.16 1.05-.35 2.22-.4 1.26-.06 1.63-.07 4.84-.07zm0-2.16C8.74 0 8.33.01 7.05.07c-1.3.06-2.19.27-2.97.58-.95.37-1.76.86-2.57 1.67S.41 3.79.04 4.74c-.31.78-.52 1.67-.58 2.97C-.01 8.99 0 9.4 0 12s.01 3.01.07 4.29c.06 1.3.27 2.19.58 2.97.37.95.86 1.76 1.67 2.57s1.62 1.3 2.57 1.67c.78.31 1.67.52 2.97.58 1.28.06 1.69.07 4.29.07s3.01-.01 4.29-.07c1.3-.06 2.19-.27 2.97-.58.95-.37 1.76-.86 2.57-1.67s1.3-1.62 1.67-2.57c.31-.78.52-1.67.58-2.97.06-1.28.07-1.69.07-4.29s-.01-3.01-.07-4.29c-.06-1.3-.27-2.19-.58-2.97-.37-.95-.86-1.76-1.67-2.57s-1.62-1.3-2.57-1.67c-.78-.31-1.67-.52-2.97-.58C15.01.01 14.6 0 12 0z"/></svg>
+      </a>
+    </div>
+  </footer>
+
+  <script>
+    let currentPlayer = 'X';
+    let board = ['', '', '', '', '', '', '', '', ''];
+    let gameActive = true;
+    let scores = { X: 0, O: 0 };
+
+    function makeMove(index) {
+      if (board[index] === '' && gameActive) {
+        board[index] = currentPlayer;
+        document.getElementById('board').children[index].textContent = currentPlayer;
+        if (checkWin()) {
+          scores[currentPlayer]++;
+          document.getElementById(score${currentPlayer}).textContent = scores[currentPlayer];
+          showModal(Player ${currentPlayer} Wins!);
+          gameActive = false;
+        } else if (board.every(cell => cell !== '')) {
+          showModal("It's a Draw!");
+          gameActive = false;
+        } else {
+          currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+          document.getElementById('status').textContent = Player ${currentPlayer}'s Turn;
+        }
+      }
+    }
+
+    function checkWin() {
+      const winPatterns = [
+        [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
+        [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
+        [0, 4, 8], [2, 4, 6] // Diagonals
+      ];
+      return winPatterns.some(pattern => 
+        pattern.every(index => board[index] === currentPlayer)
+      );
+    }
+
+    function restartGame() {
+      board = ['', '', '', '', '', '', '', '', ''];
+      currentPlayer = 'X';
+      gameActive = true;
+      document.getElementById('status').textContent = Player ${currentPlayer}'s Turn;
+      Array.from(document.getElementById('board').children).forEach(button => {
+        button.textContent = '';
+      });
+      closeModal();
+    }
+
+    function showModal(message) {
+      document.getElementById('modalMessage').textContent = message;
+      document.getElementById('modal').classList.add('show');
+    }
+
+    function closeModal() {
+      document.getElementById('modal').classList.remove('show');
+      restartGame();
+    }
+  </script>
+</body>
+</html>
