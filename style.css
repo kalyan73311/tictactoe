@@ -1,0 +1,111 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+body{
+    background-color: #548687;
+    text-align: center;
+}
+.container{
+    height:70vh;
+     display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+.box{
+    height: 70vh;
+}
+.game{
+    height: 60vmin;
+    width: 60vmin;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 1.5vmin;
+}
+.box{
+    height: 18vmin;
+    width: 18vmin;
+    border-radius: 1rem;
+    border: none;
+    box-shadow: 0 0 1rem rgba(0, 0, 0, 0.3);
+    font-size: 8vmin;
+    color: #b0413e;
+    background-color: #ffffc7;
+}
+#reset-btn{
+    padding: 1rem;
+    font-size: 1.25rem;
+    background-color: #191913;
+    color: white;
+    border-radius: 1rem;
+    border: none;
+}
+#new-btn{
+  padding: 1rem;
+    font-size: 1.25rem;
+    background-color: #191913;
+    color: white;
+    border-radius: 1rem;
+    border: none;   
+}
+#msg{
+    color: #ffffc7;
+    font-size: 5vmin;
+}
+.msg-container{
+    height: 100vmin;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 4rem;
+}
+.hide{
+    display: none ;
+}
+
+.footer {
+    width: 100%;
+    background: #222;
+    padding: 1rem 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    z-index: 100;
+}
+.footer a {
+    display: inline-block;
+    transition: transform 0.2s;
+}
+.footer a:hover {
+    transform: scale(1.2);
+    filter: brightness(1.2) drop-shadow(0 0 8px #fff);
+}
+.footer a[aria-label="LinkedIn"]:hover svg {
+    box-shadow: 0 0 16px #8ecaff;
+}
+.footer a[aria-label="Instagram"]:hover svg {
+    box-shadow: 0 0 16px #ffb6d5;
+}
+.footer a[aria-label="Facebook"]:hover svg {
+    box-shadow: 0 0 16px #a3c8ff;
+}
+.footer a[aria-label="Twitter"]:hover svg {
+    box-shadow: 0 0 16px #b3eaff;
+}
+.footer a[aria-label="GitHub"]:hover svg {
+    box-shadow: 0 0 16px #bdbdbd;
+}
+
+ .footer svg {
+    vertical-align: middle;
+    border-radius: 50%;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
